@@ -1,16 +1,16 @@
 {
   "private": true,
-  "displayName": "Plugin Name",
-  "name": "homebridge-plugin-name",
-  "version": "1.0.0",
-  "description": "A short description about what your plugin does.",
-  "license": "ISC",
+  "displayName": "Homebridge Plugin for Jeedom",
+  "name": "homebridge-jeedom-platform",
+  "version": "0.0.1",
+  "description": "Connect Jeedom over Homebridge",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/USERNAME/GITHUB_PROJECT_NAME.git"
+    "url": "git://github.com/fanta759/homebridge-jeedom-platform.git"
   },
   "bugs": {
-    "url": "https://github.com/USERNAME/GITHUB_PROJECT_NAME/issues"
+    "url": "https://github.com/fanta759/homebridge-jeedom-platform/issues"
   },
   "engines": {
     "node": ">=10.17.0",
@@ -24,15 +24,21 @@
     "prepublishOnly": "npm run lint && npm run build"
   },
   "keywords": [
-    "homebridge-plugin"
+    "homebridge-plugin",
+    "Jeedom-Platform",
+    "Jeedom"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "axios": "^0.19.2",
+    "color-convert": "^2.0.1"
+  },
   "devDependencies": {
+    "@types/color-convert": "^1.9.0",
     "@types/node": "^13.13.2",
     "@typescript-eslint/eslint-plugin": "^2.29.0",
     "@typescript-eslint/parser": "^2.29.0",
     "eslint": "^6.8.0",
-    "homebridge": "^0.4.54-beta.54",
+    "homebridge": "^1.0.0",
     "nodemon": "^2.0.3",
     "rimraf": "^3.0.2",
     "ts-node": "^8.9.0",

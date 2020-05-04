@@ -1,7 +1,9 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "HomebridgeJeedomPlatform ",
   "pluginType": "platform",
   "singular": true,
+  "headerDisplay": "Homebridge plugin for Jeedom",
+  "footerDisplay": "For help visit [Jeedom-Platform on GitHub](https://github.com/fanta759/homebridge-jeedom-platform)",
   "schema": {
     "type": "object",
     "properties": {
@@ -9,8 +11,118 @@
         "title": "Name",
         "type": "string",
         "required": true,
-        "default": "Example Dynamic Platform"
+        "default": "Jeedom"
+      },
+      "server": {
+        "title": "Server",
+        "type": "string",
+        "required": true,
+        "default": "127.0.0.1"
+      },
+      "port": {
+        "title": "port",
+        "type": "integer",
+        "required": true,
+        "default": "80",
+        "description": "If https is enable default port should be 443"
+      },
+      "https": {
+        "title": " Enable HTTPS",
+        "type": "boolean",
+        "required": true,
+        "default": false
+      },
+      "token": {
+        "title": "API Token",
+        "type": "string",
+        "required": true
+      },
+      "rootObjectId": {
+        "title": "Root object ID",
+        "type": "integer",
+        "required": true,
+        "default": 0,
+        "description": "The ID of the root object in Jeedom. If it's set to 0, homebridge load all devices"
+      },
+      "excludedDevices": {
+        "title": "Exluded Devices",
+        "type": "array",
+        "items": {
+          "title": "Excluded Device ID",
+          "type": "string",
+          "pattern": "^[0-9]"
+        }
+      },
+      "devicesSyncInterval": {
+        "title": "Devices synchonization interval (in minutes)",
+        "type": "integer",
+        "required": true,
+        "default": 10,
+        "description": "The devices synchonization interval (in minutes) to update homebridge from Jeedom"
+      },
+      "deviceStateSyncInterval": {
+        "title": "Device state synchonization interval (in secondes)",
+        "type": "integer",
+        "required": true,
+        "default": 10,
+        "description": "The device state synchonization interval (in secondes) to update the accessory state in homebridge from Jeedom"
       }
     }
-  }
+  },
+  "form": [
+    "name",
+    {
+      "type": "flex",
+      "items": [
+        "server",
+        "port",
+        "https",
+        "token",
+        "rootObjectId"
+      ]
+    },
+    {
+      "type": "fieldset",
+      "title": "Exclude Devices",
+      "expandable": true,
+      "expanded": false,
+      "items": [
+        {
+          "type": "help",
+          "helpvalue": "<h6>Exclude Devices</h6><em class='primary-text'>To prevent certain Jeesom devices from showing up in HomeBridge, add ID of the device.</em>"
+        },
+        {
+          "nodescription": true,
+          "notitle": true,
+          "key": "excludedDevices",
+          "type": "array",
+          "items": [
+            {
+              "type": "div",
+              "displayFlex": true,
+              "flex-direction": "row",
+              "items": [
+                {
+                  "key": "excludedDevices[]",
+                  "flex": "1 1 50px",
+                  "notitle": true,
+                  "placeholder": "Enter device ID..."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "fieldset",
+      "expandable": true,
+      "expanded": false,
+      "title": "Advanced Settings",
+      "items": [
+        "devicesSyncInterval",
+        "deviceStateSyncInterval"
+      ]
+    }
+  ]
 }
