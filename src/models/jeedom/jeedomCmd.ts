@@ -1,7 +1,10 @@
+import { GenericTypeEnum } from '../../enums/GenericTypeEnum';
+import { GenericTypesConverter } from '../../lib/GenericTypesConverter';
+
 export class JeedomCmd {
   public Id: number;
   public LogicalId: string;
-  public GenericType: string;  //"LIGHT_ON"
+  public GenericType: GenericTypeEnum;  //"LIGHT_ON"
   public EqType: string;  //"edisio"
   public Name: string;  //"ON"
   public Order: number; //"0"
@@ -34,7 +37,7 @@ export class JeedomCmd {
   ) {
     this.Id = +id;
     this.LogicalId = logicalId;
-    this.GenericType = genericType;
+    this.GenericType = GenericTypesConverter.toGenericType(genericType);
     this.EqType = eqType;
     this.Name = name;
     this.Order = +order;
@@ -47,5 +50,7 @@ export class JeedomCmd {
     this.IsVisible = isVisible === '1';
     this.MinValue = +minValue;
     this.MaxValue = +maxValue;
+
+
   }
 }

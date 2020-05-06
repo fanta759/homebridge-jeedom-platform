@@ -3,11 +3,13 @@ import type { Service, PlatformAccessory, CharacteristicValue, CharacteristicSet
 import * as ColorConvert from 'color-convert';
 
 import { JeedomHomebridgePlatform } from './platform';
-import { DeviceTypeEnum } from './enums/DeviceTypeEnum';
+import { DeviceTypeEnum } from './enums/deviceTypeEnum';
 import { JeedomEqLogic } from './models/jeedom/jeedomEqLogic';
 import { JeedomCmd } from './models/jeedom/jeedomCmd';
 import { JeedomApi } from './lib/jeedomApi';
 import { Helper } from './lib/helpers';
+import { GenericTypeEnum } from './enums/GenericTypeEnum';
+import { GenericTypesConverter } from './lib/GenericTypesConverter';
 
 /**
  * Jeedom Platform Accessory
@@ -22,10 +24,12 @@ export class JeedomPlatformAccessory {
   private deviceType = DeviceTypeEnum.None;
   private onCmdId!: number;
   private offCmdId!: number;
-  private stateCmdId!: number;
-  private stateIntervalId!: NodeJS.Timeout;
   private brightnessCmdId!: number;
   private colorCmdId!: number;
+  private stateCmdId!: number;
+  private brightnessStateCmdId!: number;
+  private colorStateCmdId!: number;
+  private stateIntervalId!: NodeJS.Timeout;
 
   public UUID: string;
 
@@ -79,27 +83,33 @@ export class JeedomPlatformAccessory {
 
     // Loop around commands of the Jeedom device to add and configure services and characteristics
     for (const cmd of this.device.Cmds) {
-      this.platform.log.debug(`Setting the ${cmd.GenericType} cmd of ${this.device.Name}`);
+      this.platform.log.debug(`Setting the ${GenericTypesConverter.toString(cmd.GenericType)} cmd of ${this.device.Name}`);
       switch (cmd.GenericType) {
-        case 'LIGHT_ON':
-          this.setServiceLightBulb();
+        case GenericTypeEnum.LightToggle:
+          this.setCharacteristicToggle(cmd);
+          break;
+        case GenericTypeEnum.LightOn:
           this.setCharacteristicOn(cmd);
           break;
-        case 'LIGHT_OFF':
-          this.setServiceLightBulb();
+        case GenericTypeEnum.LightOff:
           this.setCharacteristicOff(cmd);
           break;
-        case 'LIGHT_STATE':
-          this.setServiceLightBulb();
-          this.setCharacteristicState(cmd);
-          break;
-        case 'LIGHT_SLIDER':
-          this.setServiceLightBulb();
+        case GenericTypeEnum.LightSlider:
           this.setCharacteristicBrightness(cmd);
           break;
-        case 'LIGHT_SET_COLOR':
-          this.setServiceLightBulb();
+        case GenericTypeEnum.LightSetColor:
           this.setCharacteristicColor(cmd);
+          break;
+        case GenericTypeEnum.LightState:
+        case GenericTypeEnum.LightStateBool:
+          this.setCharacteristicState(cmd);
+          break;
+        case GenericTypeEnum.LightBrightness:
+          this.setCharacteristicBrightnessState(cmd);
+          break;
+        case GenericTypeEnum.LightColor:
+          this.setCharacteristicColorState(cmd);
+          break;
       }
     }
   }
@@ -122,11 +132,17 @@ export class JeedomPlatformAccessory {
     this.service.setCharacteristic(this.platform.Characteristic.Name, this.device.Name);
   }
 
+  setCharacteristicToggle(cmd: JeedomCmd) {
+    this.setCharacteristicOn(cmd);
+    this.setCharacteristicOff(cmd);
+  }
+
   /**
    * Configure characteritic light on
    * @param cmd the Jeedom device LIGHT_ON command
    */
   setCharacteristicOn(cmd: JeedomCmd) {
+    this.setServiceLightBulb();
     this.onCmdId = cmd.Id;
 
     if (!this.offCmdId) {
@@ -141,6 +157,7 @@ export class JeedomPlatformAccessory {
    * @param cmd the Jeedom device LIGHT_OFF command
    */
   setCharacteristicOff(cmd: JeedomCmd) {
+    this.setServiceLightBulb();
     this.offCmdId = cmd.Id;
 
     if (!this.onCmdId) {
@@ -151,22 +168,14 @@ export class JeedomPlatformAccessory {
   }
 
   /**
-  * Configure characteritic light state
-  * @param cmd the Jeedom device LIGHT_STATE command
-  */
-  setCharacteristicState(cmd: JeedomCmd) {
-    this.stateCmdId = cmd.Id;
-
-    if (this.deviceType < DeviceTypeEnum.LightBrightness) {
-      this.deviceType = DeviceTypeEnum.LightBrightness;
-    }
-  }
-
-  /**
    * Configure characteritic light brightness
    * @param cmd the Jeedom device LIGHT_SLIDER command
    */
   setCharacteristicBrightness(cmd: JeedomCmd) {
+    this.setServiceLightBulb();
+    if (this.deviceType < DeviceTypeEnum.LightBrightness) {
+      this.deviceType = DeviceTypeEnum.LightBrightness;
+    }
     this.brightnessCmdId = cmd.Id;
 
     this.service.getCharacteristic(this.platform.Characteristic.Brightness)
@@ -182,6 +191,7 @@ export class JeedomPlatformAccessory {
    * @param cmd the Jeedom device LIGHT_COLOR command
    */
   setCharacteristicColor(cmd: JeedomCmd) {
+    this.setServiceLightBulb();
     if (this.deviceType < DeviceTypeEnum.LightColor) {
       this.deviceType = DeviceTypeEnum.LightColor;
     }
@@ -195,6 +205,33 @@ export class JeedomPlatformAccessory {
 
     this.service.getCharacteristic(this.platform.Characteristic.Saturation)
       .on(CharacteristicEventTypes.SET, this.setColorSaturation.bind(this));
+  }
+
+  /**
+  * Configure characteritic light state
+  * @param cmd the Jeedom device LIGHT_STATE command
+  */
+  setCharacteristicState(cmd: JeedomCmd) {
+    this.setServiceLightBulb();
+    this.stateCmdId = cmd.Id;
+  }
+
+  /**
+  * Configure characteritic light state
+  * @param cmd the Jeedom device LIGHT_STATE command
+  */
+  setCharacteristicBrightnessState(cmd: JeedomCmd) {
+    this.setServiceLightBulb();
+    this.brightnessStateCmdId = cmd.Id;
+  }
+
+  /**
+  * Configure characteritic light state
+  * @param cmd the Jeedom device LIGHT_STATE command
+  */
+  setCharacteristicColorState(cmd: JeedomCmd) {
+    this.setServiceLightBulb();
+    this.colorStateCmdId = cmd.Id;
   }
 
   /**
@@ -348,12 +385,75 @@ export class JeedomPlatformAccessory {
    */
   private async updateState() {
     // Get State from Jeedom
-    const state = await this.jeedomApi.execCmdWithResult(this.stateCmdId);
+    const state = await this.jeedomApi.execCmdWithResult<boolean>(this.stateCmdId);
+    if (state === null) {
+      this.platform.log.debug(`Retreived current state of ${this.device.Name} Failed !`);
+      return;
+    }
+
+    this.states.On = state;
 
     // push the new value to HomeKit
     this.service.updateCharacteristic(this.platform.Characteristic.On, state);
 
-    this.platform.log.debug(`Pushed updated current state of  ${this.device.Name} to HomeKit: ${state}`);
+    this.platform.log.debug(`Pushed updated current state of ${this.device.Name} to HomeKit: ${state}`);
+  }
+
+  /**
+   * This is to asynchronously update the state of the accessory from Jeedom
+   */
+  private async updateBrightnessState() {
+    // Get State from Jeedom
+    const state = await this.jeedomApi.execCmdWithResult<number>(this.brightnessStateCmdId);
+
+    if (state === null) {
+      this.platform.log.debug(`Retreived current state of ${this.device.Name} Failed !`);
+      return;
+    }
+
+    this.states.Brightness = state;
+
+    // push the new value to HomeKit
+    this.service.updateCharacteristic(this.platform.Characteristic.Brightness, state);
+
+    this.platform.log.debug(`Pushed updated current brightness state of ${this.device.Name} to HomeKit: ${state}`);
+  }
+
+  /**
+   * This is to asynchronously update the state of the accessory from Jeedom
+   */
+  private async updateColorState() {
+    // Get State from Jeedom
+    let state = await this.jeedomApi.execCmdWithResult<string>(this.colorStateCmdId);
+
+    if (state === null) {
+      this.platform.log.debug(`Retreived current state of ${this.device.Name} Failed !`);
+      return;
+    }
+
+    state = state.substring(1);
+
+    [this.states.Hue, this.states.Saturation, this.states.Brightness] = ColorConvert.hex.hsv(state);
+
+    // push the new value to HomeKit
+    this.service.updateCharacteristic(this.platform.Characteristic.Hue, this.states.Hue);
+    this.service.updateCharacteristic(this.platform.Characteristic.Saturation, this.states.Saturation);
+    this.service.updateCharacteristic(this.platform.Characteristic.Brightness, this.states.Brightness);
+
+    this.platform.log.debug(`Pushed updated current color state of ${this.device.Name} to HomeKit: #${state} `
+      + `Hue: ${this.states.Hue} - Saturation: ${this.states.Saturation} - Brightness: ${this.states.Brightness}`);
+  }
+
+  private async updateStates() {
+    await this.updateState();
+
+    if (this.deviceType === DeviceTypeEnum.LightBrightness) {
+      await this.updateBrightnessState();
+    }
+
+    if (this.deviceType === DeviceTypeEnum.LightColor) {
+      await this.updateColorState();
+    }
   }
 
   /**
@@ -393,7 +493,7 @@ export class JeedomPlatformAccessory {
    * When adding in homebridge start the asynchronoulsy update of the accessory
    */
   added() {
-    this.stateIntervalId = setInterval(this.updateState.bind(this), this.platform.configuration.deviceStateSyncInterval * 1000);
+    this.stateIntervalId = setInterval(this.updateStates.bind(this), this.platform.configuration.deviceStateSyncInterval * 1000);
   }
 
   /**

@@ -5,6 +5,7 @@ import { JeedomEqLogic } from '../models/jeedom/jeedomEqLogic';
 import { Logger } from 'homebridge';
 import { JeedomObject } from '../models/jeedom/jeedomObject';
 import { JeedomApiData } from './jeedomApiData';
+import { JeedomApiResponce } from './jeedomApiResponce';
 
 export class JeedomApi {
   constructor(
@@ -46,14 +47,14 @@ export class JeedomApi {
     return this.sendExecCmd(data);
   }
 
-  execCmdWithResult(cmdId: number) {
+  async execCmdWithResult<T>(cmdId: number): Promise<T | null> {
     const data = this.buildData('cmd::execCmd', cmdId);
-    return axios.post(this.url(), data)
+    return await axios.post<JeedomApiResponce<T>>(this.url(), data)
       .then(res => {
         if (res.status === 200) {
-          return res.data.result.value as boolean;
+          return res.data.result.value;
         } else {
-          return false;
+          return null;
         }
       });
   }
