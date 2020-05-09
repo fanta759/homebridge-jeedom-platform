@@ -73,18 +73,18 @@ export class JeedomPlatformAccessory {
 
     this.previousSyncHash = newSyncHash;
 
-    const serialNumber = this.device.LogicalId ? this.device.Name : 'Default-Serial';
+    const serialNumber = this.device.logicalId ? this.device.logicalId : 'Default-Serial';
 
     // set accessory information
     this.platformAccessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.Manufacturer, this.device.EqTypeName)// 'Default-Manufacturer')
+      .setCharacteristic(this.platform.Characteristic.Manufacturer, this.device.eqType_name)// 'Default-Manufacturer')
       .setCharacteristic(this.platform.Characteristic.Model, 'Default-Model')
       .setCharacteristic(this.platform.Characteristic.SerialNumber, serialNumber); //'Default-Serial');
 
     // Loop around commands of the Jeedom device to add and configure services and characteristics
-    for (const cmd of this.device.Cmds) {
-      this.platform.log.debug(`Setting the ${GenericTypesConverter.toString(cmd.GenericType)} cmd of ${this.device.Name}`);
-      switch (cmd.GenericType) {
+    for (const cmd of this.device.cmds) {
+      this.platform.log.debug(`Setting the ${GenericTypesConverter.toString(cmd.genericType)} cmd of ${this.device.name}`);
+      switch (cmd.genericType) {
         case GenericTypeEnum.LightToggle:
           this.setCharacteristicToggle(cmd);
           break;
@@ -119,17 +119,17 @@ export class JeedomPlatformAccessory {
    */
   setServiceLightBulb() {
     if (this.service !== undefined) {
-      this.platform.log.debug(`The lightbuld service of ${this.device.Name} is already define`);
+      this.platform.log.debug(`The lightbuld service of ${this.device.name} is already define`);
       return;
     }
 
     this.deviceType = DeviceTypeEnum.Light;
 
-    this.platform.log.debug(`Defining the lightbuld service of ${this.device.Name} `);
+    this.platform.log.debug(`Defining the lightbuld service of ${this.device.name} `);
     this.service = this.platformAccessory.getService(this.platform.Service.Lightbulb)
       ?? this.platformAccessory.addService(this.platform.Service.Lightbulb);
 
-    this.service.setCharacteristic(this.platform.Characteristic.Name, this.device.Name);
+    this.service.setCharacteristic(this.platform.Characteristic.Name, this.device.name);
   }
 
   setCharacteristicToggle(cmd: JeedomCmd) {
@@ -181,8 +181,8 @@ export class JeedomPlatformAccessory {
     this.service.getCharacteristic(this.platform.Characteristic.Brightness)
       .on(CharacteristicEventTypes.SET, this.setBrightness.bind(this))
       .setProps({
-        maxValue: cmd.MaxValue,
-        minValue: cmd.MinValue,
+        maxValue: cmd.configuration.MaxValue,
+        minValue: cmd.configuration.MinValue,
       });
   }
 
@@ -387,7 +387,7 @@ export class JeedomPlatformAccessory {
     // Get State from Jeedom
     const state = await this.jeedomApi.execCmdWithResult<boolean>(this.stateCmdId);
     if (state === null) {
-      this.platform.log.debug(`Retreived current state of ${this.device.Name} Failed !`);
+      this.platform.log.debug(`Retreived current state of ${this.device.name} Failed !`);
       return;
     }
 
@@ -396,7 +396,7 @@ export class JeedomPlatformAccessory {
     // push the new value to HomeKit
     this.service.updateCharacteristic(this.platform.Characteristic.On, state);
 
-    this.platform.log.debug(`Pushed updated current state of ${this.device.Name} to HomeKit: ${state}`);
+    this.platform.log.debug(`Pushed updated current state of ${this.device.name} to HomeKit: ${state}`);
   }
 
   /**
@@ -407,7 +407,7 @@ export class JeedomPlatformAccessory {
     const state = await this.jeedomApi.execCmdWithResult<number>(this.brightnessStateCmdId);
 
     if (state === null) {
-      this.platform.log.debug(`Retreived current state of ${this.device.Name} Failed !`);
+      this.platform.log.debug(`Retreived current state of ${this.device.name} Failed !`);
       return;
     }
 
@@ -416,7 +416,7 @@ export class JeedomPlatformAccessory {
     // push the new value to HomeKit
     this.service.updateCharacteristic(this.platform.Characteristic.Brightness, state);
 
-    this.platform.log.debug(`Pushed updated current brightness state of ${this.device.Name} to HomeKit: ${state}`);
+    this.platform.log.debug(`Pushed updated current brightness state of ${this.device.name} to HomeKit: ${state}`);
   }
 
   /**
@@ -427,7 +427,7 @@ export class JeedomPlatformAccessory {
     let state = await this.jeedomApi.execCmdWithResult<string>(this.colorStateCmdId);
 
     if (state === null) {
-      this.platform.log.debug(`Retreived current state of ${this.device.Name} Failed !`);
+      this.platform.log.debug(`Retreived current state of ${this.device.name} Failed !`);
       return;
     }
 
@@ -440,7 +440,7 @@ export class JeedomPlatformAccessory {
     this.service.updateCharacteristic(this.platform.Characteristic.Saturation, this.states.Saturation);
     this.service.updateCharacteristic(this.platform.Characteristic.Brightness, this.states.Brightness);
 
-    this.platform.log.debug(`Pushed updated current color state of ${this.device.Name} to HomeKit: #${state} `
+    this.platform.log.debug(`Pushed updated current color state of ${this.device.name} to HomeKit: #${state} `
       + `Hue: ${this.states.Hue} - Saturation: ${this.states.Saturation} - Brightness: ${this.states.Brightness}`);
   }
 
@@ -460,8 +460,8 @@ export class JeedomPlatformAccessory {
    * Check if this accessory is Ready to add in homebridge
    */
   isReady(): boolean {
-    this.platform.log.debug(`Device ${this.device.Name} is type ${this.deviceType}`);
-    this.platform.log.debug(`Device ${this.device.Name} onCmd ${this.onCmdId} ` +
+    this.platform.log.debug(`Device ${this.device.name} is type ${this.deviceType}`);
+    this.platform.log.debug(`Device ${this.device.name} onCmd ${this.onCmdId} ` +
       `offCmd ${this.offCmdId} ` +
       `stateCmd ${this.stateCmdId} ` +
       `brightnessCmd ${this.brightnessCmdId} ` +
@@ -512,11 +512,11 @@ export class JeedomPlatformAccessory {
 
     // Check with hash if the Jeedom device have a device
     if (this.previousSyncHash === newSyncHash) {
-      this.platform.log.debug(`No update to do on accessory ${this.device.Name}, old : ${this.previousSyncHash} - new : ${newSyncHash}`);
+      this.platform.log.debug(`No update to do on accessory ${this.device.name}, old : ${this.previousSyncHash} - new : ${newSyncHash}`);
       return;
     }
 
-    this.platform.log.debug(`the accessory ${this.device.Name} need to be updated, old : ${this.previousSyncHash} - new : ${newSyncHash}`);
+    this.platform.log.debug(`the accessory ${this.device.name} need to be updated, old : ${this.previousSyncHash} - new : ${newSyncHash}`);
 
     this.platformAccessory.context.device = updatedDevice;
     this.platformAccessory.removeService(this.service);

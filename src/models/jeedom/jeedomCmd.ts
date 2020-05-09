@@ -1,56 +1,127 @@
+import { jsonObject, jsonMember } from 'typedjson';
 import { GenericTypeEnum } from '../../enums/GenericTypeEnum';
 import { GenericTypesConverter } from '../../lib/GenericTypesConverter';
+import { JeedomCmdConfiguration } from './jeedomCmdConfiguration';
 
+@jsonObject
 export class JeedomCmd {
-  public Id: number;
-  public LogicalId: string;
-  public GenericType: GenericTypeEnum;  //"LIGHT_ON"
-  public EqType: string;  //"edisio"
-  public Name: string;  //"ON"
-  public Order: number; //"0"
-  public Type: string;  //"action"
-  public SubType: string; //"other"
-  public EqLogicId: number; //"35"
-  public IsHistorized: boolean;
-  public Unite: string;
-  public Value: string;
-  public IsVisible: boolean;  //"1"
-  public MinValue: number;
-  public MaxValue: number;
+  @jsonMember({ constructor: String })
+  public id!: string;
 
-  constructor(
-    id: string,
-    logicalId: string,
-    genericType: string,
-    eqType: string,
-    name: string,
-    order: string,
-    type: string,
-    subType: string,
-    eqLogicId: string,
-    isHistorized: string,
-    unite: string,
-    value: string,
-    isVisible: string,
-    minValue: number,
-    maxValue: number,
-  ) {
-    this.Id = +id;
-    this.LogicalId = logicalId;
-    this.GenericType = GenericTypesConverter.toGenericType(genericType);
-    this.EqType = eqType;
-    this.Name = name;
-    this.Order = +order;
-    this.Type = type;
-    this.SubType = subType;
-    this.EqLogicId = +eqLogicId;
-    this.IsHistorized = isHistorized === '1';
-    this.Unite = unite;
-    this.Value = value;
-    this.IsVisible = isVisible === '1';
-    this.MinValue = +minValue;
-    this.MaxValue = +maxValue;
+  private _id!: number;
 
-
+  public get Id(): number {
+    if (this._id === undefined) {
+      this._id = +this.id;
+    }
+    return this._id;
   }
+
+  public set Id(value: number) {
+    this._id = value;
+  }
+
+  @jsonMember({ constructor: String })
+  public logicalId!: string;
+
+  @jsonMember({ constructor: String })
+  public generic_type!: string;  //"LIGHT_ON"
+
+  private _genericType!: GenericTypeEnum;
+  public get genericType(): GenericTypeEnum {
+    if (this._genericType === undefined) {
+      this._genericType = GenericTypesConverter.toGenericType(this.generic_type);
+    }
+
+    return this._genericType;
+  }
+
+  public set genericType(value: GenericTypeEnum) {
+    this._genericType = value;
+  }
+
+  @jsonMember({ constructor: String })
+  public eqType!: string;  //"edisio"
+
+  @jsonMember({ constructor: String })
+  public name!: string;  //"ON"
+
+  @jsonMember({ constructor: String })
+  public order!: string; //"0"
+
+  private _order!: number;
+
+  public get Order(): number {
+    if (this._id === undefined) {
+      this._order = +this.order;
+    }
+    return this._id;
+  }
+
+  public set Order(value: number) {
+    this._order = value;
+  }
+
+  @jsonMember({ constructor: String })
+  public type!: string;  //"action"
+
+  @jsonMember({ constructor: String })
+  public subType!: string; //"other"
+
+  @jsonMember({ constructor: String })
+  public eqLogic_id!: string; //"35"
+
+  private _eqLogicId!: number;
+
+  public get EqLogicId(): number {
+    if (this._id === undefined) {
+      this._eqLogicId = +this.eqLogic_id;
+    }
+    return this._eqLogicId;
+  }
+
+  public set EqLogicId(value: number) {
+    this._eqLogicId = value;
+  }
+
+  @jsonMember({ constructor: String })
+  public isHistorized!: string;
+
+  private _isHistorized!: boolean;
+
+  public get IsHistorized(): boolean {
+    if (this._isHistorized === undefined) {
+      this._isHistorized = this.isHistorized === '1';
+    }
+    return this._isHistorized;
+  }
+
+  public set IsHistorized(value: boolean) {
+    this._isHistorized = value;
+  }
+
+  @jsonMember({ constructor: String })
+  public unite!: string;
+
+  @jsonMember({ constructor: String })
+  public value!: string;
+
+  @jsonMember({ constructor: String })
+  public isVisible!: string;  //"1"
+
+  private _isVisible!: boolean;
+
+  public get IsVisible(): boolean {
+    if (this._isVisible === undefined) {
+      this._isVisible = this.isVisible === '1';
+    }
+    return this._isVisible;
+  }
+
+  public set IsVisible(value: boolean) {
+    this._isVisible = value;
+  }
+
+  @jsonMember({ constructor: JeedomCmdConfiguration })
+  public configuration!: JeedomCmdConfiguration;
 }

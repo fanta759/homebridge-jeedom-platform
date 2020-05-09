@@ -86,7 +86,7 @@ export class JeedomHomebridgePlatform implements DynamicPlatformPlugin {
     const devices = await this.jeedomApi.getDevices();
 
     // No device found
-    if (devices === undefined) {
+    if (devices === null) {
       this.log.debug('Fetch no device');
       return;
     }
@@ -110,27 +110,27 @@ export class JeedomHomebridgePlatform implements DynamicPlatformPlugin {
     // Loop over the discovered devices and register each one if it has not already been registered
     for (const device of devices) {
       if (this.configuration.excludedDevices.find(excludedDeviceId => device.Id === excludedDeviceId)) {
-        this.log.debug(`The device ${device.Name} is excluded from configuration file`);
+        this.log.debug(`The device ${device.name} is excluded from configuration file`);
         continue;
       }
 
-      const uuid = this.api.hap.uuid.generate(`${device.Id}`);
+      const uuid = this.api.hap.uuid.generate(device.id);
       foundDevices.push(uuid);
 
       // Check that the device has already been registered by checking the
       // cached devices we stored in the configureAccessory method
       const existingDevice = this.accessories.find(accessory => accessory.UUID === uuid);
       if (existingDevice) {
-        this.log.debug(`Device ${device.Name} already added from cache`);
+        this.log.debug(`Device ${device.name} already added from cache`);
 
         existingDevice.updateFromDevice(device);
         continue;
       }
 
-      this.log.info(`Registering new accessory: ${device.Name} : ${uuid}`);
+      this.log.info(`Registering new accessory: ${device.name} : ${uuid}`);
 
       // Create a new accessory
-      const platformAccessory = new this.api.platformAccessory(device.Name, uuid);
+      const platformAccessory = new this.api.platformAccessory(device.name, uuid);
 
       platformAccessory.context.device = device;
       // Create the accessory handler

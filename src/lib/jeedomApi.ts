@@ -1,11 +1,12 @@
-import axios from 'axios';
+import Axios, { AxiosError } from 'axios';
+import { TypedJSON } from 'typedjson';
 import { Configuration } from '../models/configuration';
 import { Helper } from './helpers';
-import { JeedomEqLogic } from '../models/jeedom/jeedomEqLogic';
 import { Logger } from 'homebridge';
 import { JeedomObject } from '../models/jeedom/jeedomObject';
 import { JeedomApiData } from './jeedomApiData';
-import { JeedomApiResponce } from './jeedomApiResponce';
+import { JeedomApiResponse } from './jeedomApiResponse';
+import { JeedomApiResult } from './jeedomApiResult';
 
 export class JeedomApi {
   constructor(
@@ -13,21 +14,23 @@ export class JeedomApi {
     public readonly log: Logger) {
   }
 
-  getDevices(): Promise<JeedomEqLogic[] | undefined> {
+  async getDevices() {
     const data = this.buildData('object::full');
 
-    return axios.post(this.url(), data)
-      .then(res => {
-        if (res.status === 200) {
-          const objects: JeedomObject[] = [];
+    try {
+      const response = await Axios.post<JeedomApiResponse<JeedomObject[]>>(this.url(), data);
+      const serializer = new TypedJSON(JeedomObject);
+      const objects = serializer.parseAsArray(response.data.result);
+      return Helper.filterEqLogicFromObjects(objects, this.configuration.rootObjectId, this.log);
+    } catch (error) {
+      if (error && error.response) {
+        const axiosError = error as AxiosError;
+        this.log.error(`Error on getDevice, code : ${axiosError.code} - data : ${data}`);
+        return null;
+      }
 
-          for (const obj of res.data.result) {
-            objects.push(new JeedomObject(obj.id, obj.name, obj.father_id, obj.eqLogics));
-          }
-
-          return Helper.filterEqLogicFromObjectd(objects, this.configuration.rootObjectId, this.log);
-        }
-      });
+      throw error;
+    }
   }
 
   execCmd(cmdId: number) {
@@ -49,25 +52,34 @@ export class JeedomApi {
 
   async execCmdWithResult<T>(cmdId: number): Promise<T | null> {
     const data = this.buildData('cmd::execCmd', cmdId);
-    return await axios.post<JeedomApiResponce<T>>(this.url(), data)
-      .then(res => {
-        if (res.status === 200) {
-          return res.data.result.value;
-        } else {
-          return null;
-        }
-      });
+
+    try {
+      const response = await Axios.post<JeedomApiResponse<JeedomApiResult<T>>>(this.url(), data);
+      return response.data.result.value;
+    } catch (error) {
+      if (error && error.response) {
+        const axiosError = error as AxiosError;
+        this.log.error(`Error on sendExecCmdWithResult, code : ${axiosError.code} - data : ${data}`);
+        return null;
+      }
+
+      throw error;
+    }
   }
 
-  private sendExecCmd(data: JeedomApiData) {
-    return axios.post(this.url(), data)
-      .then(res => {
-        if (res.status === 200) {
-          return true;
-        } else {
-          return false;
-        }
-      });
+  private async sendExecCmd(data: JeedomApiData) {
+    try {
+      await Axios.post(this.url(), data);
+      return true;
+    } catch (error) {
+      if (error && error.response) {
+        const axiosError = error as AxiosError;
+        this.log.error(`Error on sendExecCmd, code : ${axiosError.code} - data : ${data}`);
+        return false;
+      }
+
+      throw error;
+    }
   }
 
   private url() {

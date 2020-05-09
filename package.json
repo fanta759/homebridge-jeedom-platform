@@ -30,7 +30,8 @@
   ],
   "dependencies": {
     "axios": "^0.19.2",
-    "color-convert": "^2.0.1"
+    "color-convert": "^2.0.1",
+    "typedjson": "^1.5.1"
   },
   "devDependencies": {
     "@types/color-convert": "^1.9.0",

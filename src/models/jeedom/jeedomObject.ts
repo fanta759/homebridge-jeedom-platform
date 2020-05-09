@@ -1,31 +1,43 @@
+import { jsonObject, jsonMember, jsonArrayMember } from 'typedjson';
 import { JeedomEqLogic } from './jeedomEqLogic';
 
+@jsonObject
 export class JeedomObject {
-  public Id: number;
-  public Name: string;
-  public FatherId: number;
-  public EqLogics: JeedomEqLogic[];
+  @jsonMember({ constructor: String })
+  public id!: string;
 
-  constructor(
-    id: string,
-    name: string,
-    fatherId: string,
-    eqLogics: any[],
-  ) {
-    this.Id = +id;
-    this.Name = name;
-    this.FatherId = +fatherId;
-    this.EqLogics = [];
+  private _id!: number;
 
-    for (const eqLogic of eqLogics) {
-      this.EqLogics.push(new JeedomEqLogic(eqLogic.id,
-        eqLogic.name,
-        eqLogic.logicalId,
-        eqLogic.objectId,
-        eqLogic.eqType_name,
-        eqLogic.isVisible,
-        eqLogic.isEnable,
-        eqLogic.cmds));
+  public get Id(): number {
+    if (this._id === undefined) {
+      this._id = +this.id;
     }
+    return this._id;
   }
+
+  public set Id(value: number) {
+    this._id = value;
+  }
+
+  @jsonMember({ constructor: String })
+  public name!: string;
+
+  @jsonMember({ constructor: String })
+  public father_id!: string;
+
+  private _fatherId!: number;
+
+  public get FatherId(): number {
+    if (this._fatherId === undefined) {
+      this._fatherId = +this.father_id;
+    }
+    return this._fatherId;
+  }
+
+  public set FatherId(value: number) {
+    this._fatherId = value;
+  }
+
+  @jsonArrayMember(JeedomEqLogic)
+  public eqLogics!: JeedomEqLogic[];
 }
