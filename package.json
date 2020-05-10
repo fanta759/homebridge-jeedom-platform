@@ -2,7 +2,7 @@
   "private": true,
   "displayName": "Homebridge Plugin for Jeedom",
   "name": "homebridge-jeedom-platform",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Connect Jeedom over Homebridge",
   "license": "Apache-2.0",
   "repository": {
