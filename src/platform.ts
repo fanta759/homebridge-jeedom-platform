@@ -166,7 +166,9 @@ export class JeedomHomebridgePlatform implements DynamicPlatformPlugin {
       this.accessories.splice(removedIndex, 1);
     }
 
-    // Set a timeout to synchronize every this.configuration.devicesSyncInterval minutes
-    setTimeout(this.synchronizeDevices.bind(this), this.configuration.devicesSyncInterval * 60 * 1000);
+    if (this.configuration.devicesSyncInterval !== 0) {
+      // Set a timeout to synchronize every this.configuration.devicesSyncInterval minutes
+      setTimeout(this.synchronizeDevices.bind(this), this.configuration.devicesSyncInterval * 60 * 1000);
+    }
   }
 }
