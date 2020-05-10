@@ -1,107 +1,108 @@
 
-<p align="center">
+[//]: # "[!npm (tag)](https://img.shields.io/npm/v/homebridge-edomoticz/latest)"
+[//]: # "![npm](https://img.shields.io/npm/dt/homebridge-edomoticz?label=Downloads&style=flat-square)"
 
-<img src="https://github.com/homebridge/branding/raw/master/logos/homebridge-wordmark-logo-vertical.png" width="150">
+# Homebridge-Jeedom-Platform
+This is a plugin for [Homebridge](https://github.com/nfarina/homebridge) and [Homebridge Config UI X Support](https://github.com/oznu/homebridge-config-ui-x) and [Jeedom](https://www.jeedom.com/).
 
-</p>
+## Supports:
+<details>
+<summary><b>Standard HomeKit Types (supported by Home.app):</b></summary>
+    
+- Lamps (on/off)
+- Lamps (dimmer)
+- Lamps (color)
+</details>
 
+## Installation
 
-# Homebridge Platform Plugin Template
+**Option 1: Install via Homebridge Config UI X:**
 
-This is a template Homebridge platform plugin and can be used as a base to help you get started developing your own plugin.
+ 1. Navigate to the Plugins page in in [homebridge-config-ui-x](https://github.com/oznu/homebridge-config-ui-x).
+ 2. Search for "jeedom" and install homebridge-jeedom-platform.
 
-## Clone As Template
-
-Click the link below to create a new GitHub Repository using this template, or click the *Use This Template* button above.
-
-<span align="center">
-
-### [Create New Repository From Template](https://github.com/homebridge/homebridge-plugin-template/generate)
-
-</span>
-
-## Setup Development Environment
-
-To develop Homebridge plugins you must have Node.js 12 or later installed, and a modern code editor such as [VS Code](https://code.visualstudio.com/). This plugin template uses [TypeScript](https://www.typescriptlang.org/) to make development easier and comes with pre-configured settings for [VS Code](https://code.visualstudio.com/) and ESLint. If you are using VS Code install these extensions:
-
-* [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-
-## Install Development Dependencies
-
-Using a terminal, navigate to the project folder and run this command to install the development dependencies:
-
+**Option 2: Manually Install:**
 ```
-npm install
+sudo npm install -g homebridge-jeedom-platform
 ```
 
-## Update package.json
+## Update
 
-Open the [`package.json`](./package.json) and change the following attributes:
+**Option 1: Update via Homebridge Config UI X:**
 
-* `name` - this should be prefixed with `homebridge-` or `@username/homebridge-` and contain no spaces or special characters apart from a dashes
-* `displayName` - this is the "nice" name displayed in the Homebridge UI
-* `repository.url` - Link to your GitHub repo
-* `bugs.url` - Link to your GitHub repo issues page
+ 1. Navigate to the Plugins page in [homebridge-config-ui-x](https://github.com/oznu/homebridge-config-ui-x).
+ 2. Click the Update button for the Jeedom platform plugin.
 
-When you are ready to publish the plugin you should set `private` to false, or remove the attribute entirely.
-
-## Update Plugin Defaults
-
-Open the [`src/settings.ts`](./src/settings.ts) file and change the default values:
-
-* `PLATFORM_NAME` - Set this to be the name of your platform. This is the name of the platform that users will use to register the plugin in the Homebridge `config.json`.
-* `PLUGIN_NAME` - Set this to be the same name you set in the [`package.json`](./package.json) file. 
-
-Open the [`config.schema.json`](./config.schema.json) file and change the following attribute:
-
-* `pluginAlias` - set this to match the `PLATFORM_NAME` you defined in the previous step.
-
-## Build Plugin
-
-TypeScript needs to be compiled into JavaScript before it can run. The following command will compile the contents of your [`src`](./src) directory and put the resulting code into the `dist` folder.
-
+**Option 2: Manually Update:**
 ```
-npm run build
+sudo npm update -g homebridge-jeedom-platform
 ```
 
-## Link To Homebridge
+## Configuration
 
-Run this command so your global install of Homebridge can discover the plugin in your development environment:
+To configure homebridge-jeedom-platform you must also be running [homebridge-config-ui-x](https://github.com/oznu/homebridge-config-ui-x).
 
+ 1. Navigate to the Plugins page in homebridge-config-ui-x.
+ 2. Click the Settings button for the Jeedom Platform plugin.
+ 
+ ![sDomoticz](jeedom-platform.png)
+ 
+### Manual Settings
+
+<details><summary><b>Manual Configuration</b></summary>
+
+~/.homebridge/config.json example:
+```js
+{
+    "bridge": {
+        "name": "Homebridge",
+        "username": "CC:21:3E:E4:DE:33",
+        "port": 51826,
+        "pin": "031-45-154"
+    },
+    "platforms": [
+        {
+	    "platform": "HomebridgeJeedomPlatform",
+	    "name": "Jeedom",
+	    "server": "127.0.0.1",
+	    "port": 80,
+	    "https": 0,
+	    "token": "CNHLlaXdDWRHO1GitAc0jPjTpY7JcGVv",
+	    "rootObjectId": 0,
+	    "devicesSyncInterval": 10,
+	    "deviceStateSyncInterval": 10,
+	    "excludedDevices": []
+        }
+    ],
+    "accessories": []
+}
 ```
-npm link
+To prevent certain Jeedom devices from showing up in HomeBridge it is possible to exclude them by setting the "excludedDevices" parameter.
+Provide an array of Jeedom Device ID's, which can be found in the Jeedom dashboard on the "Analysis > Home Automation summary" page and look for the "id" at the start of each line of device.
+
+```js
+"excludedDevices": ["12","30","129"]
 ```
+</details>
 
-You can now start Homebridge, use the `-D` flag so you can see debug log messages in your plugin:
+<details><summary><b>Advanced Configuration</b></summary>
 
-```
-homebridge -D
-```
+### Devices synchonization interval
+By default, the plugin synchronize the hardware informations every 10 minutes. You can increase or decrease this intervale or cancel the synchonization by setting at 0.
 
-## Watch For Changes and Build Automatically
+### Device state synchonization interval
+By default, the plugin synchronize the device staye every 10 seconde. You can increase or decrease this intervale. You cant't cancel the synchonization by setting at 0.
+</details>
 
-If you want to have your code compile automatically as you make changes, and restart Homebridge automatically between changes you can run:
+## Tips
 
-```
-npm run watch
-```
+### Issues pairing to Homebridge when you have a lot of Jeedom devices...
+If you have more than 99 devices in Jeedom, you need to limit the number of devices exposed to HomeKit (Homebridge only supports 99 Accessories on a single bridge - whilst we could combine multiple sensors into a single homekit accessory within the plugin, the possible combinations out there are endless, so we won't).
 
-This will launch an instance of Homebridge in debug mode which will restart every time you make a change to the source code. It will the config stored in the default location under `~/.homebridge`. You may need to stop other running instances of Homebridge while using this command to prevent conflicts. You can adjust the Homebridge startup command in the [`nodemon.json`](./nodemon.json) file.
+Therefore, to reduce the number of devices exposed from Jeedom, create a object within Jeedom via Tools > Objects. Add only the devices you wish to be exposed to HomeKit to this new object within Jeedom, and then get it's ID number. Set "rootObjectId" in your config.json file to this object number.
 
-## Publish Package
+### Is my device supported??
+To get your device work with domoticz, check the "Type generic" of each command of the device in advanced parameters of command. A lightbulb must have a Light button on, a Light button off ans a Light state for example.
 
-When you are ready to publish your plugin to [npm](https://www.npmjs.com/), make sure you have removed the `private` attribute from the [`package.json`](./package.json) file then run:
-
-```
-npm publish
-```
-
-If you are publishing a scoped plugin, i.e. `@username/homebridge-xxx` you will need to add `--access=public` to command the first time you publish.
-
-## Versioning Your Plugin
-
-Given a version number `MAJOR`.`MINOR`.`PATCH`, such as `1.4.3`, increment the:
-
-1. **MAJOR** version when you make breaking changes to your plugin,
-2. **MINOR** version when you add functionality in a backwards compatible manner, and
-3. **PATCH** version when you make backwards compatible bug fixes.
+### Logging
+Complies with Homebridge's native logging & debugging methodology - see https://github.com/nfarina/homebridge/wiki/Basic-Troubleshooting
