@@ -26,11 +26,13 @@ export class Configuration implements PlatformConfig {
   }
 
   isConfigurationOK() {
-    return this.name &&
-      this.server &&
-      this.port &&
-      this.token &&
-      this.rootObjectId !== undefined;
+    return this.name
+      && this.server
+      && this.port
+      && this.token
+      && this.rootObjectId !== undefined
+      && this.devicesSyncInterval >= 0
+      && this.deviceStateSyncInterval > 0;
   }
 
   toString() {
