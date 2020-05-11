@@ -1,5 +1,4 @@
 {
-  "private": true,
   "displayName": "Homebridge Plugin for Jeedom",
   "name": "homebridge-jeedom-platform",
   "version": "1.0.0",
