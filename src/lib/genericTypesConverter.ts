@@ -1,4 +1,4 @@
-import { GenericTypeEnum } from '../enums/GenericTypeEnum';
+import { GenericTypeEnum } from '../enums/genericTypeEnum';
 
 export class GenericTypesConverter {
   static toGenericType(type: string): GenericTypeEnum {

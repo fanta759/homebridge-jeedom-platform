@@ -8,8 +8,8 @@ import { JeedomEqLogic } from './models/jeedom/jeedomEqLogic';
 import { JeedomCmd } from './models/jeedom/jeedomCmd';
 import { JeedomApi } from './lib/jeedomApi';
 import { Helper } from './lib/helpers';
-import { GenericTypeEnum } from './enums/GenericTypeEnum';
-import { GenericTypesConverter } from './lib/GenericTypesConverter';
+import { GenericTypeEnum } from './enums/genericTypeEnum';
+import { GenericTypesConverter } from './lib/genericTypesConverter';
 
 /**
  * Jeedom Platform Accessory

@@ -1,6 +1,6 @@
 import { jsonObject, jsonMember } from 'typedjson';
-import { GenericTypeEnum } from '../../enums/GenericTypeEnum';
-import { GenericTypesConverter } from '../../lib/GenericTypesConverter';
+import { GenericTypeEnum } from '../../enums/genericTypeEnum';
+import { GenericTypesConverter } from '../../lib/genericTypesConverter';
 import { JeedomCmdConfiguration } from './jeedomCmdConfiguration';
 
 @jsonObject
