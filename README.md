@@ -1,6 +1,5 @@
-
-[//]: # "[!npm (tag)](https://img.shields.io/npm/v/homebridge-edomoticz/latest)"
-[//]: # "![npm](https://img.shields.io/npm/dt/homebridge-edomoticz?label=Downloads&style=flat-square)"
+![npm (tag)](https://img.shields.io/npm/v/homebridge-jeedom-platform/latest)
+![npm](https://img.shields.io/npm/dt/homebridge-jeedom-platform?label=Downloads&style=flat)
 
 # Homebridge-Jeedom-Platform
 This is a plugin for [Homebridge](https://github.com/nfarina/homebridge) and [Homebridge Config UI X Support](https://github.com/oznu/homebridge-config-ui-x) and [Jeedom](https://www.jeedom.com/).
