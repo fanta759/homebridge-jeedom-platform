@@ -44,7 +44,7 @@ To configure homebridge-jeedom-platform you must also be running [homebridge-con
  1. Navigate to the Plugins page in homebridge-config-ui-x.
  2. Click the Settings button for the Jeedom Platform plugin.
  
- ![sDomoticz](jeedom-platform.png)
+ ![sJeedom](jeedom-platform.png)
  
 ### Manual Settings
 
