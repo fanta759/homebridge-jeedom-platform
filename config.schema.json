@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "HomebridgeJeedomPlatform ",
+  "pluginAlias": "HomebridgeJeedomPlatform",
   "pluginType": "platform",
   "singular": true,
   "headerDisplay": "Homebridge plugin for Jeedom",
