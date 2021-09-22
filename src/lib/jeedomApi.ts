@@ -83,7 +83,7 @@ export class JeedomApi {
   }
 
   private url() {
-    return `http${this.configuration.https ? 's' : ''}://${this.configuration.server}/core/api/jeeApi.php`;
+    return `http${this.configuration.https ? 's' : ''}://${this.configuration.server}:${this.configuration.port}/core/api/jeeApi.php`;
   }
 
   private buildData(method: string, id: number | undefined = undefined) {
