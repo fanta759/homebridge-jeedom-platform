@@ -1,5 +1,5 @@
 import { CharacteristicEventTypes } from 'homebridge';
-import type { Service, PlatformAccessory, CharacteristicValue, CharacteristicSetCallback, CharacteristicGetCallback } from 'homebridge';
+import { Service, PlatformAccessory, CharacteristicValue, CharacteristicSetCallback, CharacteristicGetCallback } from 'homebridge';
 import * as ColorConvert from 'color-convert';
 
 import { JeedomHomebridgePlatform } from './platform';
@@ -127,7 +127,7 @@ export class JeedomPlatformAccessory {
 
     this.platform.log.debug(`Defining the lightbuld service of ${this.device.name} `);
     this.service = this.platformAccessory.getService(this.platform.Service.Lightbulb)
-      ?? this.platformAccessory.addService(this.platform.Service.Lightbulb);
+      || this.platformAccessory.addService(this.platform.Service.Lightbulb);
 
     this.service.setCharacteristic(this.platform.Characteristic.Name, this.device.name);
   }

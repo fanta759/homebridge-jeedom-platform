@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "HomebridgeJeedomPlatform ",
+  "pluginAlias": "HomebridgeJeedomPlatform",
   "pluginType": "platform",
   "singular": true,
   "headerDisplay": "Homebridge plugin for Jeedom",
@@ -17,7 +17,8 @@
         "title": "Server",
         "type": "string",
         "required": true,
-        "default": "127.0.0.1"
+        "default": "127.0.0.1",
+        "format": "hostname"
       },
       "port": {
         "title": "port",
@@ -25,6 +26,8 @@
         "required": true,
         "default": "80",
         "description": "If https is enable default port should be 443"
+        "minimum": 1,
+        "maximum": 65535
       },
       "https": {
         "title": " Enable HTTPS",
@@ -42,15 +45,17 @@
         "type": "integer",
         "required": true,
         "default": 0,
-        "description": "The ID of the root object in Jeedom. If it's set to 0, homebridge load all devices"
+        "description": "The ID of the root object in Jeedom. If it's set to 0, homebridge load all devices",
+        "minimum": 0
       },
       "excludedDevices": {
-        "title": "Exluded Devices",
+        "title": "Excluded Devices",
         "type": "array",
         "items": {
           "title": "Excluded Device ID",
-          "type": "string",
-          "pattern": "^[0-9]"
+          "type": "integer",
+          "pattern": "^[0-9]",
+          "minimum": 1
         }
       },
       "devicesSyncInterval": {
@@ -58,29 +63,26 @@
         "type": "integer",
         "required": true,
         "default": 10,
-        "description": "The devices synchonization interval (in minutes) to update homebridge from Jeedom"
+        "description": "The devices synchonization interval (in minutes) to update homebridge from Jeedom",
+        "minimum": 0
       },
       "deviceStateSyncInterval": {
         "title": "Device state synchonization interval (in secondes)",
         "type": "integer",
         "required": true,
         "default": 10,
-        "description": "The device state synchonization interval (in secondes) to update the accessory state in homebridge from Jeedom"
+        "description": "The device state synchonization interval (in secondes) to update the accessory state in homebridge from Jeedom",
+        "minimum": 1
       }
     }
   },
-  "form": [
+  "layout": [
     "name",
-    {
-      "type": "flex",
-      "items": [
-        "server",
-        "port",
-        "https",
-        "token",
-        "rootObjectId"
-      ]
-    },
+    "server",
+    "port",
+    "https",
+    "token",
+    "rootObjectId",
     {
       "type": "fieldset",
       "title": "Exclude Devices",
