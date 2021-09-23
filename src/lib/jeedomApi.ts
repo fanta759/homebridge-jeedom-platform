@@ -23,8 +23,8 @@ export class JeedomApi {
       const objects = serializer.parseAsArray(response.data.result);
       return Helper.filterEqLogicFromObjects(objects, this.configuration.rootObjectId, this.log);
     } catch (error) {
-      if (error && error.response) {
-        const axiosError = error as AxiosError;
+      const axiosError = error as AxiosError;
+      if (axiosError && axiosError.response) {
         this.log.error(`Error on getDevice, code : ${axiosError.code} - data : ${data}`);
         return null;
       }
@@ -57,8 +57,8 @@ export class JeedomApi {
       const response = await Axios.post<JeedomApiResponse<JeedomApiResult<T>>>(this.url(), data);
       return response.data.result.value;
     } catch (error) {
-      if (error && error.response) {
-        const axiosError = error as AxiosError;
+      const axiosError = error as AxiosError;
+      if (axiosError && axiosError.response) {
         this.log.error(`Error on sendExecCmdWithResult, code : ${axiosError.code} - data : ${data}`);
         return null;
       }
@@ -72,8 +72,8 @@ export class JeedomApi {
       await Axios.post(this.url(), data);
       return true;
     } catch (error) {
-      if (error && error.response) {
-        const axiosError = error as AxiosError;
+      const axiosError = error as AxiosError;
+      if (axiosError && axiosError.response) {
         this.log.error(`Error on sendExecCmd, code : ${axiosError.code} - data : ${data}`);
         return false;
       }
