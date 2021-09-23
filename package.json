@@ -29,22 +29,22 @@
     "Jeedom"
   ],
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.4",
     "color-convert": "^2.0.1",
-    "typedjson": "^1.5.1"
+    "typedjson": "^1.7.0"
   },
   "devDependencies": {
-    "@types/color-convert": "^1.9.0",
-    "@types/node": "^14.0.1",
-    "@typescript-eslint/eslint-plugin": "^2.33.0",
-    "@typescript-eslint/parser": "^2.33.0",
-    "eslint": "^6.8.0",
+    "@types/color-convert": "^2.0.0",
+    "@types/node": "^14.17.18",
+    "@typescript-eslint/eslint-plugin": "^4.31.2",
+    "@typescript-eslint/parser": "^4.31.2",
+    "eslint": "^7.32.0",
     "homebridge": "^1.1.0",
-    "nodemon": "^2.0.4",
+    "nodemon": "^2.0.12",
     "release-it": "^14.11.6",
     "rimraf": "^3.0.2",
-    "ts-node": "^8.10.1",
-    "typescript": "^3.9.2"
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.3"
   },
   "release-it": {
     "github": {
