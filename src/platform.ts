@@ -108,7 +108,13 @@ export class JeedomHomebridgePlatform implements DynamicPlatformPlugin {
     const foundDevices: string[] = [];
 
     // Loop over the discovered devices and register each one if it has not already been registered
-    for (const device of devices) {
+    let filteredDevice = devices;
+
+    if(this.configuration.excludedDevices.length !== 0) {
+      filteredDevice = filteredDevice.filter(device => this.configuration.excludedDevices.every(excludedDeviceId => device.Id !== excludedDeviceId));
+    }
+
+    for (const device of filteredDevice) {
       if (this.configuration.excludedDevices.find(excludedDeviceId => device.Id === excludedDeviceId)) {
         this.log.debug(`The device ${device.name} is excluded from configuration file`);
         continue;
