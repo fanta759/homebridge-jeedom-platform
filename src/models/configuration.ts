@@ -8,7 +8,7 @@ export class Configuration implements PlatformConfig {
   public readonly https: boolean;
   public readonly token: string;
   public readonly rootObjectId: number;
-  public readonly excludedDevices: number[];
+  public readonly excludedDevices: number[] = [];
   public readonly devicesSyncInterval: number;
   public readonly deviceStateSyncInterval: number;
 
@@ -20,7 +20,7 @@ export class Configuration implements PlatformConfig {
     this.https = config.https;
     this.token = config.token;
     this.rootObjectId = config.rootObjectId;
-    this.excludedDevices = config.excludedDevices;
+    this.excludedDevices = config.excludedDevices || [];
     this.devicesSyncInterval = config.devicesSyncInterval;
     this.deviceStateSyncInterval = config.deviceStateSyncInterval;
   }
