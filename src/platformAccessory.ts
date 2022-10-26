@@ -133,8 +133,10 @@ export class JeedomPlatformAccessory {
   }
 
   setCharacteristicToggle(cmd: JeedomCmd) {
-    this.setCharacteristicOn(cmd);
-    this.setCharacteristicOff(cmd);
+    if (!this.onCmdId && !this.offCmdId) {
+      this.setCharacteristicOn(cmd);
+      this.setCharacteristicOff(cmd);
+    }
   }
 
   /**
