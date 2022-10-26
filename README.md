@@ -107,7 +107,7 @@ If you have more than 99 devices in Jeedom, you need to limit the number of devi
 Therefore, to reduce the number of devices exposed from Jeedom, create a object within Jeedom via Tools > Objects. Add only the devices you wish to be exposed to HomeKit to this new object within Jeedom, and then get it's ID number. Set "rootObjectId" in your config.json file to this object number.
 
 ### Is my device supported??
-To get your device work with domoticz, check the "Type generic" of each command of the device in advanced parameters of command. A lightbulb must have a Light button on, a Light button off ans a Light state for example.
+To get your device work with this plugin, check the "Type generic" of each command of the device in advanced parameters of command. A lightbulb must have a Light button on, a Light button off ans a Light state for example.
 
 ### Logging
 Complies with Homebridge's native logging & debugging methodology - see https://github.com/nfarina/homebridge/wiki/Basic-Troubleshooting
